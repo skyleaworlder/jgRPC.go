@@ -42,7 +42,7 @@ func (req *Request) GetCID() uint16 {
 	return 0
 }
 
-// SetCID is a get-method
+// SetCID is a set-method
 func (req *Request) SetCID(CID uint16) uint16 {
 	if req != nil {
 		req.CID = CID
@@ -59,7 +59,7 @@ func (req *Request) GetType() uint8 {
 	return 0
 }
 
-// SetType is a get-method
+// SetType is a set-method
 func (req *Request) SetType(Type uint8) uint8 {
 	if req != nil {
 		req.Type = Type
@@ -76,7 +76,7 @@ func (req *Request) GetParamNum() uint8 {
 	return 0
 }
 
-// SetParamNum is a get-method
+// SetParamNum is a set-method
 func (req *Request) SetParamNum(ParamNum uint8) uint8 {
 	if req != nil {
 		req.ParamNum = ParamNum
@@ -93,7 +93,7 @@ func (req *Request) GetLength() uint16 {
 	return 0
 }
 
-// SetLength is a get-method
+// SetLength is a set-method
 func (req *Request) SetLength(Length uint16) uint16 {
 	if req != nil {
 		req.Length = Length
@@ -110,7 +110,7 @@ func (req *Request) GetSrcAddr() uint32 {
 	return 0
 }
 
-// SetSrcAddr is a get-method
+// SetSrcAddr is a set-method
 func (req *Request) SetSrcAddr(SrcAddr uint32) uint32 {
 	if req != nil {
 		req.SrcAddr = SrcAddr
@@ -119,9 +119,11 @@ func (req *Request) SetSrcAddr(SrcAddr uint32) uint32 {
 	return 0
 }
 
-// SetSrcAddrStr is a get-method
+// SetSrcAddrStr is a set-method
 func (req *Request) SetSrcAddrStr(SrcAddr string) uint32 {
 	if req != nil {
+		ip := parseIPv4(SrcAddr)
+		req.SrcAddr = ip
 		return req.SrcAddr
 	}
 	return 0
@@ -146,9 +148,27 @@ func (req *Request) GetFuncName() string {
 	return ""
 }
 
+// SetFuncName is a set-method
+func (req *Request) SetFuncName(FuncName string) string {
+	if req != nil {
+		req.FuncName = FuncName
+		return req.FuncName
+	}
+	return ""
+}
+
 // GetParamPart is a get-method
 func (req *Request) GetParamPart() []TLV {
 	if req != nil {
+		return req.ParamPart
+	}
+	return nil
+}
+
+// SetParamPart is a set-method
+func (req *Request) SetParamPart(ParamPart []TLV) []TLV {
+	if req != nil {
+		req.ParamPart = ParamPart
 		return req.ParamPart
 	}
 	return nil
