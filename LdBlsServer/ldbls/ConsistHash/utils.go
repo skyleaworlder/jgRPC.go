@@ -9,14 +9,14 @@ import (
 
 // NodeComp is a less than comparison function
 // this function is used in SortedMap.New()
-func NodeComp(i, j interface{}) bool {
+func nodeComp(i, j interface{}) bool {
 	return i.(*ldbls.Node).HID <= j.(*ldbls.Node).HID
 }
 
 // DeltaUint64 is a function return |i-j| on a ring mod 2^64
 // due to the type of i and j is unsigned int64,
 // so it's important to test whether one parameter is greater than the other one.
-func DeltaUint64(inpHID, nodeHID uint64) (uint64, error) {
+func deltaUint64(inpHID, nodeHID uint64) (uint64, error) {
 	const (
 		UINT64MAX     = ^uint64(0)
 		HALFUINT64MAX = UINT64MAX >> 1
