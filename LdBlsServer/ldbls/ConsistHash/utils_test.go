@@ -41,12 +41,13 @@ func Test_DeltaUint64(t *testing.T) {
 	tmp, _ = DeltaUint64(1, 5)
 	fmt.Println("2.1 (1,5):", tmp)
 
-	tmp, _ = DeltaUint64(5, 1)
-	fmt.Println("2.2 (5,1):", tmp)
+	tmp, _ = DeltaUint64(1, ^uint64(0)-1)
+	fmt.Println("2.2 (1, 2^64-2):", tmp)
 
 	tmp, _ = DeltaUint64(^uint64(0)-1, 1)
 	fmt.Println("2.3 (2^64-2,1):", tmp)
 
-	tmp, _ = DeltaUint64(1, ^uint64(0)-1)
-	fmt.Println("2.4 (1, 2^64-2):", tmp)
+	tmp, _ = DeltaUint64(5, 1)
+	fmt.Println("2.4 (5,1):", tmp)
+
 }
