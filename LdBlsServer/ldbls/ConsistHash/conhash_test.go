@@ -81,7 +81,7 @@ func Test_RESTfulAPI(t *testing.T) {
 	}
 
 	fmt.Println("1.5 I try to search node b:")
-	ht.HT.Get(bres)
+	nb, _ = ht.GetNode(bres + 10000)
 	if !ok {
 		fmt.Println("fuck! fail!")
 	} else {

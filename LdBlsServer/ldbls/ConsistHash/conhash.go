@@ -20,6 +20,10 @@ func newConHash() *conhash {
 	return res
 }
 
+// GetNode is a method that can select the most suitable node in hash ring.
+// In Consist Hash, all nodes are put into a ring, identified by its KEY(HID).
+// I define uint64 as the type of HID, so 2^64 nodes are max-supported.
+// This method return the nearest node.
 func (c *conhash) GetNode(HID uint64) (*ldbls.Node, error) {
 	iter, err := c.HT.IterCh()
 	if err != nil {
@@ -28,10 +32,27 @@ func (c *conhash) GetNode(HID uint64) (*ldbls.Node, error) {
 		return &ldbls.Node{}, errors.New(err.Error() + msg)
 	}
 	defer iter.Close()
+
+	// Try to find the nearest node on ring.
+	var delta uint64 = ^uint64(0)
+	var target *ldbls.Node
 	for rec := range iter.Records() {
-		fmt.Println("rec:", rec)
+		tmpDelta, err := DeltaUint64(rec.Key.(uint64), HID)
+		if err != nil {
+			msg := "Fatal Error: conhash.DeltaUint64 failed\n"
+			fmt.Fprint(os.Stderr, err.Error()+msg)
+			return &ldbls.Node{}, errors.New(err.Error() + msg)
+		}
+
+		// refresh
+		if tmpDelta < delta {
+			fmt.Print("delta:", tmpDelta, "\n")
+			delta = tmpDelta
+			target = rec.Val.(*ldbls.Node)
+		}
 	}
-	return &ldbls.Node{}, nil
+
+	return target, nil
 }
 
 func (c *conhash) PostNode(n *ldbls.Node) (*ldbls.Node, error) {

@@ -33,3 +33,20 @@ func Test_HIDComp(t *testing.T) {
 	fmt.Printf("hb's res: %x\n", bres)
 	fmt.Printf("hc's res: %x\n", cres)
 }
+
+func Test_DeltaUint64(t *testing.T) {
+	fmt.Println("2. DeltaUint64:")
+
+	var tmp uint64
+	tmp, _ = DeltaUint64(1, 5)
+	fmt.Println("2.1 (1,5):", tmp)
+
+	tmp, _ = DeltaUint64(5, 1)
+	fmt.Println("2.2 (5,1):", tmp)
+
+	tmp, _ = DeltaUint64(^uint64(0)-1, 1)
+	fmt.Println("2.3 (2^64-2,1):", tmp)
+
+	tmp, _ = DeltaUint64(1, ^uint64(0)-1)
+	fmt.Println("2.4 (1, 2^64-2):", tmp)
+}
