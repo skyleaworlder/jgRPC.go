@@ -21,3 +21,15 @@ func Test_proto(t *testing.T) {
 func Test_parseIPv4(t *testing.T) {
 	fmt.Println("ip is:", parseIPv4("192.168.1.1"), 0xc0a80101)
 }
+
+func Test_ConstructRequest(t *testing.T) {
+	fmt.Println("3.3 jgproto.Test_ConstructRequest:")
+	defreq := ConstructRequest()
+	fmt.Printf("Magic: %x\n", defreq.GetMagic())
+	fmt.Printf("CID: %d\n", defreq.GetCID())
+	fmt.Printf("Type: %x\n", defreq.GetType())
+	fmt.Printf("Param_num: %d\n", defreq.GetParamNum())
+	fmt.Printf("Length: %d\n", defreq.GetLength())
+	fmt.Printf("Src_addr: %x\n", defreq.GetSrcAddr())
+	fmt.Printf("Func_name: %s\n", defreq.GetFuncName())
+}

@@ -1,6 +1,8 @@
 package jgproto
 
 import (
+	"crypto/rand"
+	"math/big"
 	"strconv"
 	"strings"
 )
@@ -34,6 +36,38 @@ type Request struct {
 	SrcAddr   uint32
 	FuncName  string
 	ParamPart []TLV
+}
+
+// ConstructRequest is a default construct function
+func ConstructRequest() *Request {
+	// to generate CID
+	const UINT16MAX = ^uint16(0)
+	req := new(Request)
+
+	// set MAGIC charactor JG
+	req.SetMagic(0x4A47)
+
+	// generate a true random number as CID
+	rd, _ := rand.Int(rand.Reader, big.NewInt(int64(UINT16MAX)))
+	CID := uint16(rd.Uint64())
+	req.SetCID(CID)
+
+	// default type is CALL(0), and void
+	req.SetType(0)
+	req.SetParamNum(0)
+
+	// Length means len({ SRC_ADDR, FUNC_NAME })
+	// SRC_ADDR + FUNC_NAME  = 4
+	//    4     + 0(default) = 4
+	req.SetLength(4)
+	// set SRC_ADDR 127.0.0.1
+	req.SetSrcAddrStr("127.0.0.1")
+	// default FUNC_NAME is ""
+	req.SetFuncName("")
+
+	// default PARAM_PART is nil
+	req.SetParamPart([]TLV{})
+	return req
 }
 
 // GetMagic is a get-method
