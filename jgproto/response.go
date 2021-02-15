@@ -70,12 +70,12 @@ func (resp *Response) ComposeResponse() (res []byte) {
 }
 
 // ParseResponse is a function to process []byte into Response
-func ParseResponse(msg []byte) (res []interface{}) {
+func ParseResponse(msg []byte) (Type uint8, ReturnNum uint8, res []interface{}) {
 	resp := new(Response)
 
 	Magic := binary.BigEndian.Uint16(msg[0:2])
 	CID := binary.BigEndian.Uint16(msg[2:4])
-	Type, ReturnNum := uint8(msg[4]), uint8(msg[5])
+	Type, ReturnNum = uint8(msg[4]), uint8(msg[5])
 
 	resp.SetMagic(Magic)
 	resp.SetCID(CID)
