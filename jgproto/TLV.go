@@ -64,6 +64,19 @@ func ConstructTLV(param interface{}) *TLV {
 	return tlv
 }
 
+// ComposeTLV is a method to generate a TLV
+func (tlv *TLV) ComposeTLV() (res []byte) {
+	TypeLength := make([]byte, 2)
+	Type := uint16(tlv.GetType())
+	Length := uint16(tlv.GetLength())
+	Value := tlv.GetValue()
+
+	binary.BigEndian.PutUint16(TypeLength, Type<<8+Length)
+	res = append(res, TypeLength...)
+	res = append(res, Value...)
+	return
+}
+
 // GetType is a get-method
 func (tlv *TLV) GetType() uint8 {
 	if tlv != nil {

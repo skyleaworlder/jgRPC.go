@@ -8,7 +8,7 @@ import (
 )
 
 func Test_ConstructTLV(t *testing.T) {
-	fmt.Println("4. TLV constructor test:")
+	fmt.Println("4.1 TLV constructor test:")
 
 	var a int8 = 0
 	var b uint8 = 1
@@ -29,11 +29,21 @@ func Test_ConstructTLV(t *testing.T) {
 	}
 
 	for idx, rec := range testData {
-		fmt.Println("4." + strconv.Itoa(idx) + ": " + reflect.TypeOf(rec).String())
+		fmt.Println("4.1." + strconv.Itoa(idx) + ": " + reflect.TypeOf(rec).String())
 		tlv := ConstructTLV(rec)
 		fmt.Printf("type:  %x\n", tlv.GetType())
 		fmt.Printf("len:   %d\n", tlv.GetLength())
 		fmt.Printf("value: %x\n", tlv.GetValue())
 		fmt.Println("")
 	}
+}
+
+func Test_ComposeTLV(t *testing.T) {
+	fmt.Println("4.2 TLV Composer test:")
+
+	var a float64 = 10.526
+	tlv := ConstructTLV(a)
+	tlvByte := tlv.ComposeTLV()
+
+	fmt.Println(tlvByte)
 }
