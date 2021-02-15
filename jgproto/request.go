@@ -2,6 +2,7 @@ package jgproto
 
 import (
 	"crypto/rand"
+	"encoding/binary"
 	"math/big"
 	"strconv"
 	"strings"
@@ -39,6 +40,22 @@ type Request struct {
 }
 
 // ConstructRequest is a default construct function
+//
+// Magic: JG
+//
+// CID: have generated using crypto/rand in Constructor
+//
+// Type: default CALL(0)
+//
+// ParamNum: default 0
+//
+// Length: default 4(only Src_Addr)
+//
+// SrcAddr: default 127.0.0.1
+//
+// FuncName: default ""
+//
+// ParamPart default []TLV{}
 func ConstructRequest() *Request {
 	// to generate CID
 	const UINT16MAX = ^uint16(0)
@@ -68,6 +85,39 @@ func ConstructRequest() *Request {
 	// default PARAM_PART is nil
 	req.SetParamPart([]TLV{})
 	return req
+}
+
+// ComposeRequest is a method to generate a request([]byte)
+func (req *Request) ComposeRequest() (res []byte) {
+
+	Magic := make([]byte, 2)
+	CID := make([]byte, 2)
+	TypeParamNum := make([]byte, 2)
+	Length := make([]byte, 2)
+	SrcAddr := make([]byte, 4)
+	FuncName := []byte(req.FuncName)
+
+	Type := uint16(req.GetType())
+	ParamNum := uint16(req.GetParamNum())
+	binary.BigEndian.PutUint16(Magic, req.Magic)
+	binary.BigEndian.PutUint16(CID, req.CID)
+	binary.BigEndian.PutUint16(TypeParamNum, Type<<8+ParamNum)
+	binary.BigEndian.PutUint16(Length, req.Length)
+	binary.BigEndian.PutUint32(SrcAddr, req.SrcAddr)
+
+	fields := [][]byte{
+		Magic, CID, TypeParamNum, Length, SrcAddr, FuncName,
+	}
+	for _, v := range fields {
+		res = append(res, v...)
+	}
+
+	// process Param-Part
+	ParamPart := req.GetParamPart()
+	for _, tlv := range ParamPart {
+		res = append(res, tlv.ComposeTLV()...)
+	}
+	return
 }
 
 // GetMagic is a get-method

@@ -33,3 +33,20 @@ func Test_ConstructRequest(t *testing.T) {
 	fmt.Printf("Src_addr: %x\n", defreq.GetSrcAddr())
 	fmt.Printf("Func_name: %s\n", defreq.GetFuncName())
 }
+
+func Test_ComposeRequest(t *testing.T) {
+	fmt.Println("3.4 jgproto.Test_ComposeRequest:")
+
+	defreq := ConstructRequest()
+	defreq.SetFuncName("add")
+	defreq.SetParamNum(2)
+	defreq.SetLength(7)
+
+	var a uint64 = 5
+	var b uint64 = 6
+	atlv, btlv := ConstructTLV(a), ConstructTLV(b)
+	defreq.SetParamPart([]TLV{*atlv, *btlv})
+
+	bytarr := defreq.ComposeRequest()
+	fmt.Println("[]byte of request:", bytarr)
+}
