@@ -3,6 +3,7 @@ package jgproto
 import (
 	"bytes"
 	"encoding/binary"
+	"math"
 	"reflect"
 )
 
@@ -75,6 +76,51 @@ func (tlv *TLV) ComposeTLV() (res []byte) {
 	res = append(res, TypeLength...)
 	res = append(res, Value...)
 	return
+}
+
+// ParseTLV is a function to parse TLV
+func ParseTLV(msg []byte) (uint8, uint8, interface{}) {
+
+	Type, Length := uint8(msg[0]), uint8(msg[1])
+	Value := msg[2:]
+
+	//0x02, 0x03, 0x04, 0x05,
+	//	0x06, 0x07, 0x08, 0x09, 0x0a,
+	var val interface{}
+	switch Type {
+	case 0x00:
+		val = int(Value[0])
+	case 0x01:
+		val = uint(Value[0])
+	case 0x02:
+		val = int16(binary.BigEndian.Uint16(Value))
+	case 0x03:
+		val = binary.BigEndian.Uint16(Value)
+	case 0x04:
+		val = int32(binary.BigEndian.Uint32(Value))
+	case 0x05:
+		val = binary.BigEndian.Uint32(Value)
+	case 0x06:
+		val = int64(binary.BigEndian.Uint64(Value))
+	case 0x07:
+		val = binary.BigEndian.Uint64(Value)
+	case 0x08:
+		if Value[0] == 1 {
+			val = true
+		}
+		val = false
+	case 0x09:
+		bits := binary.BigEndian.Uint32(Value)
+		val = math.Float32frombits(bits)
+	case 0x0a:
+		bits := binary.BigEndian.Uint64(Value)
+		val = math.Float64frombits(bits)
+	case 0x0b:
+		val = Value
+	case 0x0c:
+		val = string(Value)
+	}
+	return Type, Length, val
 }
 
 // GetType is a get-method
