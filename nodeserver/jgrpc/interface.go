@@ -3,6 +3,7 @@ package jgrpcserver
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 )
 
 // RPC is an interface support numeric calculation
@@ -37,11 +38,12 @@ func (c *Calculator) Call(FuncName string, Param ...interface{}) (res []reflect.
 	// get the function handler identified by FuncName
 	fd := reflect.ValueOf(c.PTB[FuncName])
 
+	fmt.Println("About function " + FuncName + ":")
 	// process parameters input
 	param := make([]reflect.Value, len(Param))
 	for i, val := range Param {
 		param[i] = reflect.ValueOf(val)
-		fmt.Println(val)
+		fmt.Println("No."+strconv.Itoa(i)+" Parameter is:", val)
 	}
 
 	// for debug
