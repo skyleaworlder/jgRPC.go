@@ -7,8 +7,8 @@ import (
 )
 
 // Dial is a function, using cfg to send msg
-func Dial(cfg map[string]string, msg []byte) ([]byte, error) {
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", cfg["NS_Addr"])
+func Dial(addr string, msg []byte) ([]byte, error) {
+	tcpAddr, err := net.ResolveTCPAddr("tcp4", addr)
 	if err != nil {
 		fmt.Fprint(os.Stderr, "Warning: jgrpc.Dial, net.ResolveTCPAddr failed\n")
 		return []byte{}, err

@@ -23,7 +23,7 @@ func add(c *Calculator, a, b int8) int8 {
 
 	// fmt.Println("request, buf:", buf)
 	// send request and get result in buf
-	buf, _ = jgut.Dial(c.Config, buf)
+	buf, _ = jgut.Dial(c.Config["TS_Addr"], buf)
 	// fmt.Println("response, buf:", buf)
 
 	// process response
