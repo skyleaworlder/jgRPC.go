@@ -33,6 +33,7 @@ func getResponse(msg []byte) []byte {
 	case 0x00:
 		resp = prtco.ConstructResponse(CID)
 		ReturnPart := calcuReturnPart(Calcu, req.GetFuncName(), req.GetParamNum(), req.GetParamPart())
+		resp.SetReturnNum(uint8(len(ReturnPart)))
 		resp.SetReturnPart(ReturnPart)
 	}
 
@@ -43,6 +44,8 @@ func getResponse(msg []byte) []byte {
 // a function that calls RPC.Call, provides parameters.
 func calcuReturnPart(in jgrpcs.RPC, FuncName string, ParamNum uint8, ParamPart []prtco.TLV) []prtco.TLV {
 	params := make([]interface{}, ParamNum)
+	// for debug
+	// fmt.Println("param tlv part:", ParamPart)
 	for i, param := range ParamPart {
 		_, _, val := prtco.ParseTLV(param.ComposeTLV())
 		params[i] = val

@@ -39,7 +39,9 @@ func main() {
 	Calcu.Init()
 	Calcu.Config = Config
 
-	listener, err := net.Listen("tcp4", Config["Listen_Port"])
+	port := Config["Listen_Port"]
+	tcpAddr, _ := net.ResolveTCPAddr("tcp", port)
+	listener, err := net.ListenTCP("tcp4", tcpAddr)
 	if err != nil {
 		msg := "Warning: Node Server listener initialization failed\n"
 		fmt.Fprint(os.Stderr, msg)
@@ -47,6 +49,7 @@ func main() {
 	}
 
 	for {
+		fmt.Println("Success!")
 		conn, err := listener.Accept()
 		if err != nil {
 			msg := "Warning: Node Server listener failed\n"

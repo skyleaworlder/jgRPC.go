@@ -27,5 +27,5 @@ func main() {
 	calcu.Config = Config
 
 	res := calcu.Add(1, 2)
-	fmt.Println(res)
+	fmt.Println("calcu.Add(1, 2) result from remote: ", res)
 }

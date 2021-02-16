@@ -8,7 +8,13 @@ import (
 
 // Dial is a function, using cfg to send msg
 func Dial(cfg map[string]string, msg []byte) ([]byte, error) {
-	conn, err := net.Dial("tcp4", cfg["NS_Addr"])
+	tcpAddr, err := net.ResolveTCPAddr("tcp4", cfg["NS_Addr"])
+	if err != nil {
+		fmt.Fprint(os.Stderr, "Warning: jgrpc.Dial, net.ResolveTCPAddr failed\n")
+		return []byte{}, err
+	}
+
+	conn, err := net.DialTCP("tcp", nil, tcpAddr)
 	if err != nil {
 		fmt.Fprint(os.Stderr, "Warning: jgrpc.Dial, net.Dial failed\n")
 		return []byte{}, err

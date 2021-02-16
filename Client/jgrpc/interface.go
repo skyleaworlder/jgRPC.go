@@ -11,6 +11,6 @@ type Calculator struct {
 }
 
 // Add is a function to calculate a + b
-func (c *Calculator) Add(a, b int) int {
+func (c *Calculator) Add(a, b int8) int8 {
 	return add(c, a, b)
 }

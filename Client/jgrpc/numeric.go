@@ -5,8 +5,8 @@ import (
 	jgut "github.com/skyleaworlder/jgRPC.go/jgrpcUtils"
 )
 
-func add(c *Calculator, a, b int) int {
-	const FuncName = "add"
+func add(c *Calculator, a, b int8) int8 {
+	const FuncName = "AddInt8"
 	req := prtco.ConstructRequest()
 
 	// generate request
@@ -21,10 +21,12 @@ func add(c *Calculator, a, b int) int {
 
 	buf := req.ComposeRequest()
 
+	// fmt.Println("request, buf:", buf)
 	// send request and get result in buf
 	buf, _ = jgut.Dial(c.Config, buf)
+	// fmt.Println("response, buf:", buf)
 
 	// process response
 	_, _, res := prtco.ParseResponse(buf)
-	return res[0].(int)
+	return res[0].(int8)
 }
