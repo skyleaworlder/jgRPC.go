@@ -28,6 +28,11 @@ func (c *Calculator) Init() {
 // Call is a method to call a interface method
 // since result's type might be various, so return []reflect.Value
 func (c *Calculator) Call(FuncName string, Param ...interface{}) (res []reflect.Value) {
+	// if FuncName in PTB
+	if _, ok := c.PTB[FuncName]; !ok {
+		res = []reflect.Value{}
+		return
+	}
 	// function descriptor
 	// get the function handler identified by FuncName
 	fd := reflect.ValueOf(c.PTB[FuncName])
