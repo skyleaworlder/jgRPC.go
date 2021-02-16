@@ -18,3 +18,13 @@ A Non-Standard RPC.
 * [ ] Service Register Center; (Simple)
 * [ ] Service Discovery; (Simple)
 * [ ] Health Probe; (Non-Standard)
+
+## Now
+
+![Load Balance Server Work](README.assets/LdBls.png)
+
+The first window is `Client.go`, the second is `LdBlsServer.go`, while the third and the forth are `NodeServer.go`.
+
+It's clear that `Load Balance Server` does work.
+
+(From the second window, Node1 and Node2 seems out-off-balance for the number of Node Servers is still too small when it comes to using `CONSIST-HASH` as the algothrim of `Load Balance`.)
