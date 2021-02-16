@@ -1,4 +1,4 @@
-package jgrpc
+package jgrpcutils
 
 import (
 	"fmt"
@@ -6,10 +6,11 @@ import (
 	"os"
 )
 
-func connect(cfg map[string]string, msg []byte) ([]byte, error) {
+// Dial is a function, using cfg to send msg
+func Dial(cfg map[string]string, msg []byte) ([]byte, error) {
 	conn, err := net.Dial("tcp4", cfg["NS_Addr"])
 	if err != nil {
-		fmt.Fprint(os.Stderr, "Warning: jgrpc.send, net.Dial failed\n")
+		fmt.Fprint(os.Stderr, "Warning: jgrpc.Dial, net.Dial failed\n")
 		return []byte{}, err
 	}
 	defer conn.Close()
@@ -17,7 +18,7 @@ func connect(cfg map[string]string, msg []byte) ([]byte, error) {
 	// Call
 	_, err = conn.Write(msg)
 	if err != nil {
-		fmt.Fprint(os.Stderr, "Warning: jgrpc.send, conn.Write failed\n")
+		fmt.Fprint(os.Stderr, "Warning: jgrpc.Dial, conn.Write failed\n")
 		return []byte{}, err
 	}
 
@@ -25,7 +26,7 @@ func connect(cfg map[string]string, msg []byte) ([]byte, error) {
 	// wait
 	_, err = conn.Read(buf)
 	if err != nil {
-		fmt.Fprint(os.Stderr, "Warning: jgrpc.send, conn.Read failed\n")
+		fmt.Fprint(os.Stderr, "Warning: jgrpc.Dial, conn.Read failed\n")
 		return []byte{}, err
 	}
 
