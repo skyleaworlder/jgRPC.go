@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net"
 	"os"
@@ -32,12 +33,20 @@ var (
 
 	// Calcu is the obj of calculator
 	Calcu = new(jgrpcs.Calculator)
+
+	port = flag.String("p", ":23331", "port number")
 )
 
 func main() {
 	jgut.Readcfg(Config, "NodeServer.cfg")
 	Calcu.Init()
 	Calcu.Config = Config
+
+	flag.Parse()
+	if *port != ":23331" {
+		Calcu.Config["Listen_Port"] = *port
+	}
+	fmt.Println("Listen Port is:", Calcu.Config["Listen_Port"])
 
 	port := Config["Listen_Port"]
 	tcpAddr, _ := net.ResolveTCPAddr("tcp", port)
