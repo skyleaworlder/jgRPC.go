@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"time"
+
+	conhash "github.com/skyleaworlder/jgRPC.go/LdBlsServer/ConsistHash"
+	jgut "github.com/skyleaworlder/jgRPC.go/jgrpcUtils"
 )
 
 // LdBlsServer should implement several functions:
@@ -16,13 +20,20 @@ import (
 // 3. communicate with Node Server
 // 	send CALL(0), receive data-OK(1) response
 
-func handleRequest(conn net.Conn) {
-	defer conn.Close()
-}
+const (
+	cfgMaxNum = 16
+)
+
+var (
+	// Config is a map
+	// e.g. "Local_IP" => "127.0.0.1"
+	Config = make(map[string]string, cfgMaxNum)
+)
 
 func main() {
-	addr := "127.0.0.1:30000"
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", addr)
+	// init LdBlsServer
+	jgut.Readcfg(Config, "LdBlsServer.cfg")
+	tcpAddr, err := net.ResolveTCPAddr("tcp4", Config["Listen_Port"])
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Fatal Error: %s", err.Error())
 		os.Exit(1)
@@ -34,12 +45,32 @@ func main() {
 		os.Exit(1)
 	}
 
+	ht := conhash.InitConHash(Config)
+	fmt.Println(ht)
+
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Fatal Error: %s", err.Error())
 			continue
 		}
-		go handleRequest(conn)
+		go handleRequest(ht, conn)
 	}
+}
+
+func handleRequest(ht *conhash.Conhash, conn net.Conn) {
+	conn.SetDeadline(time.Now().Add(5 * time.Second))
+	defer conn.Close()
+
+	buf := make([]byte, 256)
+	_, err := conn.Read(buf)
+	if err != nil {
+		msg := "Warning: LdBls Server handleRequest failed\n"
+		fmt.Fprint(os.Stderr, msg)
+		return
+	}
+
+	resp := make([]byte, 256)
+	resp, _ = getResponse(ht, buf)
+	conn.Write(resp)
 }
