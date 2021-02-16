@@ -79,19 +79,18 @@ func (tlv *TLV) ComposeTLV() (res []byte) {
 }
 
 // ParseTLV is a function to parse TLV
-func ParseTLV(msg []byte) (uint8, uint8, interface{}) {
+func ParseTLV(msg []byte) (Type uint8, Length uint8, val interface{}) {
 
-	Type, Length := uint8(msg[0]), uint8(msg[1])
+	Type, Length = uint8(msg[0]), uint8(msg[1])
 	Value := msg[2:]
 
 	//0x02, 0x03, 0x04, 0x05,
 	//	0x06, 0x07, 0x08, 0x09, 0x0a,
-	var val interface{}
 	switch Type {
 	case 0x00:
-		val = int(Value[0])
+		val = int8(Value[0])
 	case 0x01:
-		val = uint(Value[0])
+		val = uint8(Value[0])
 	case 0x02:
 		val = int16(binary.BigEndian.Uint16(Value))
 	case 0x03:
@@ -120,7 +119,7 @@ func ParseTLV(msg []byte) (uint8, uint8, interface{}) {
 	case 0x0c:
 		val = string(Value)
 	}
-	return Type, Length, val
+	return
 }
 
 // GetType is a get-method
