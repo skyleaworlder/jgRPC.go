@@ -17,6 +17,13 @@ func Test_calcuReturnPart(t *testing.T) {
 	tlv := []jgproto.TLV{*jgproto.ConstructTLV(a), *jgproto.ConstructTLV(b)}
 
 	res := calcuReturnPart(calcu, "AddInt8", 2, tlv)
+
+	resp := jgproto.ConstructResponse(123)
+	fmt.Println(res)
+	resp.SetReturnNum(1)
+	resp.SetReturnPart(res)
+	fmt.Println("resp:", resp)
+	fmt.Println("resp(byte):", resp.ComposeResponse())
 	for _, v := range res {
 		_, _, r := jgproto.ParseTLV(v.ComposeTLV())
 		fmt.Println(r)

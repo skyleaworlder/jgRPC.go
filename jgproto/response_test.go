@@ -33,6 +33,7 @@ func Test_ParseResponse(t *testing.T) {
 		sls = append(sls, *ConstructTLV(val))
 	}
 	resp.SetReturnPart(sls)
+	fmt.Println("resp:", resp)
 
 	buf := resp.ComposeResponse()
 	fmt.Println(ParseResponse(buf))
