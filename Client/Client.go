@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strings"
+
+	jgrpcc "github.com/skyleaworlder/jgRPC.go/Client/jgrpc"
+	jgut "github.com/skyleaworlder/jgRPC.go/jgrpcUtils"
 )
 
 // Client should be able to implement:
@@ -22,29 +22,10 @@ var (
 )
 
 func main() {
-	readcfg("client.cfg")
-}
+	jgut.Readcfg(Config, "client.cfg")
+	calcu := new(jgrpcc.Calculator)
+	calcu.Config = Config
 
-func readcfg(cfgAddr string) {
-	fd, err := os.Open(cfgAddr)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
-		os.Exit(1)
-	}
-	defer fd.Close()
-
-	scan := bufio.NewScanner(fd)
-	for scan.Scan() {
-		lineTxt := scan.Text()
-		// comments or blank line
-		// short-circuit operation
-		if len(lineTxt) == 0 || lineTxt[0] == '#' {
-			continue
-		}
-
-		// process line text of config file
-		cfgSls := strings.Split(lineTxt, "=")
-		key, val := cfgSls[0], cfgSls[1]
-		Config[key] = val
-	}
+	res := calcu.Add(1, 2)
+	fmt.Println(res)
 }
