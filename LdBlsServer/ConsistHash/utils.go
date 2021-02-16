@@ -1,10 +1,10 @@
-package conhash
+package consisthash
 
 import (
 	"errors"
 	"reflect"
 
-	"github.com/skyleaworlder/jgRPC.go/LdBlsServer/ldbls"
+	ldbls "github.com/skyleaworlder/jgRPC.go/LdBlsServer/ldbls"
 )
 
 // NodeComp is a less than comparison function

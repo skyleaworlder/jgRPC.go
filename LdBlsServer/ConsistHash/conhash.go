@@ -1,4 +1,4 @@
-package conhash
+package consisthash
 
 import (
 	"errors"
@@ -9,12 +9,13 @@ import (
 	sm "github.com/umpc/go-sortedmap"
 )
 
-type conhash struct {
+// Conhash is a exported struct
+type Conhash struct {
 	HT *sm.SortedMap
 }
 
-// newConHash is a function to create an obj
-func (c *conhash) Init() error {
+// Init is a function to create an obj
+func (c *Conhash) Init() error {
 	if c == nil {
 		msg := "Fatal Error: conhash.Init try to init the space that a nil pointer points\n"
 		fmt.Fprint(os.Stderr, msg)
@@ -47,7 +48,7 @@ func (c *conhash) Init() error {
 // 1. given HID is 0x56, then return "3";
 // 2. given HID is 0x23, then return "1";
 // 3. given HID is 0xfb, then return "0".
-func (c *conhash) GetNode(HID uint64) (*ldbls.Node, error) {
+func (c *Conhash) GetNode(HID uint64) (*ldbls.Node, error) {
 	iter, err := c.HT.IterCh()
 	if err != nil {
 		msg := "Fatal Error: conhash.GetNode cannot generate an iter\n"
@@ -91,7 +92,7 @@ func (c *conhash) GetNode(HID uint64) (*ldbls.Node, error) {
 //
 // other HT solution might be taken into consideration in the future perhaps?
 // e.g. chord-DHT?
-func (c *conhash) PostNode(n *ldbls.Node) (*ldbls.Node, error) {
+func (c *Conhash) PostNode(n *ldbls.Node) (*ldbls.Node, error) {
 	ok := c.HT.Insert(n.HID, n)
 	if !ok {
 		msg := "Just Warning: conhash.PostNode failed, for HT is full perhaps\n"
@@ -103,7 +104,7 @@ func (c *conhash) PostNode(n *ldbls.Node) (*ldbls.Node, error) {
 
 // DeleteNode is a method used to delete one node from hash ring.
 // Do not delete an unexisted node from ring, which will generate an error.
-func (c *conhash) DeleteNode(HID uint64) (*ldbls.Node, error) {
+func (c *Conhash) DeleteNode(HID uint64) (*ldbls.Node, error) {
 	node, ok := c.HT.Get(HID)
 	if !ok {
 		msg := "Fatal Error: conhash.DeleteNode cannot get node from HT\n"
@@ -120,7 +121,7 @@ func (c *conhash) DeleteNode(HID uint64) (*ldbls.Node, error) {
 // 2. delete the node in HT that own the same key as given node.
 // 3. insert a new node which is with the same key as the deleted node,
 //    but with different properties, like addr, port, etc.
-func (c *conhash) PutNode(n *ldbls.Node) (*ldbls.Node, error) {
+func (c *Conhash) PutNode(n *ldbls.Node) (*ldbls.Node, error) {
 	// since sm.Replace don't have return val, I don't use c.HT.Replace(n.HID, n)
 	if !c.HT.Has(n.HID) {
 		msg := "Fatal Error: conhash.PutNode cannot use sm.Has function to find node from HT\n"

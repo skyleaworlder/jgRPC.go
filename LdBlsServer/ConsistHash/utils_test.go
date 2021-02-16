@@ -1,4 +1,4 @@
-package conhash
+package consisthash
 
 import (
 	"crypto/sha1"

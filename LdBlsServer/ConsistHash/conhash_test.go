@@ -1,4 +1,4 @@
-package conhash
+package consisthash
 
 import (
 	"crypto/sha1"
@@ -27,7 +27,7 @@ func Test_RESTfulAPI(t *testing.T) {
 	fmt.Printf("bres: %x\n", hb.Sum(nil))
 	fmt.Printf("cres: %x\n", hc.Sum(nil))
 
-	var ht = new(conhash)
+	var ht = new(Conhash)
 	ht.Init()
 	nodea := ldbls.Node{
 		HID: ares, IP: net.ParseIP("192.168.1.1"), PORT: 5000,
