@@ -120,6 +120,43 @@ func (req *Request) ComposeRequest() (res []byte) {
 	return
 }
 
+// ParseRequest is a function to transfer []byte to Request
+func ParseRequest(msg []byte) (req *Request) {
+	req = new(Request)
+
+	Magic := binary.BigEndian.Uint16(msg[0:2])
+	CID := binary.BigEndian.Uint16(msg[2:4])
+	Type := uint8(msg[4])
+	ParamNum := uint8(msg[5])
+	Length := binary.BigEndian.Uint16(msg[6:8])
+	SrcAddr := binary.BigEndian.Uint32(msg[8:12])
+	FuncNameLen := Length - 4
+	FuncName := string(msg[12 : 12+FuncNameLen])
+
+	req.SetMagic(Magic)
+	req.SetCID(CID)
+	req.SetType(Type)
+	req.SetParamNum(ParamNum)
+	req.SetLength(Length)
+	req.SetSrcAddr(SrcAddr)
+	req.SetFuncName(FuncName)
+
+	var tlv []TLV
+	var i uint8 = 0
+	tlvBeg := 12 + FuncNameLen
+	for ; i < ParamNum; i++ {
+		t := new(TLV)
+		t.SetType(msg[tlvBeg])
+		t.SetLength(msg[tlvBeg+1])
+		t.SetValue(msg[tlvBeg+2 : tlvBeg+2+uint16(t.GetLength())])
+		tlv = append(tlv, *t)
+		tlvBeg += uint16(t.GetLength()) + 2
+	}
+
+	req.SetParamPart(tlv)
+	return
+}
+
 // GetMagic is a get-method
 func (req *Request) GetMagic() uint16 {
 	if req != nil {

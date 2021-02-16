@@ -50,3 +50,30 @@ func Test_ComposeRequest(t *testing.T) {
 	bytarr := defreq.ComposeRequest()
 	fmt.Println("[]byte of request:", bytarr)
 }
+
+func Test_ParseRequest(t *testing.T) {
+	fmt.Println("3.5 jgproto.Test_ParseRequest:")
+
+	defreq := ConstructRequest()
+	defreq.SetFuncName("add")
+	defreq.SetParamNum(2)
+	defreq.SetLength(7)
+
+	var a uint64 = 5
+	var b uint64 = 6
+	atlv, btlv := ConstructTLV(a), ConstructTLV(b)
+	defreq.SetParamPart([]TLV{*atlv, *btlv})
+
+	bytarr := defreq.ComposeRequest()
+	fmt.Println("[]byte of request:", bytarr)
+
+	defreq = ParseRequest(bytarr)
+	fmt.Printf("Magic: %x\n", defreq.GetMagic())
+	fmt.Printf("CID: %d\n", defreq.GetCID())
+	fmt.Printf("Type: %x\n", defreq.GetType())
+	fmt.Printf("Param_num: %d\n", defreq.GetParamNum())
+	fmt.Printf("Length: %d\n", defreq.GetLength())
+	fmt.Printf("Src_addr: %x\n", defreq.GetSrcAddr())
+	fmt.Printf("Func_name: %s\n", defreq.GetFuncName())
+	fmt.Printf("Param_Part: %x\n", defreq.GetParamPart())
+}
