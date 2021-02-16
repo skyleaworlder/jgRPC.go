@@ -1,4 +1,4 @@
-package jgrpc
+package jgrpcclient
 
 // Numeric is an interface support numeric calculation
 type Numeric interface {

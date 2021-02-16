@@ -1,6 +1,9 @@
-package jgrpc
+package jgrpcclient
 
-import prtco "github.com/skyleaworlder/jgRPC.go/jgproto"
+import (
+	prtco "github.com/skyleaworlder/jgRPC.go/jgproto"
+	jgut "github.com/skyleaworlder/jgRPC.go/jgrpcUtils"
+)
 
 func add(c *Calculator, a, b int) int {
 	const FuncName = "add"
@@ -18,8 +21,8 @@ func add(c *Calculator, a, b int) int {
 
 	buf := req.ComposeRequest()
 
-	// send request
-	buf, _ = connect(c.Config, buf)
+	// send request and get result in buf
+	buf, _ = jgut.Dial(c.Config, buf)
 
 	// process response
 	_, _, res := prtco.ParseResponse(buf)
