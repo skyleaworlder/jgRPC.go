@@ -33,6 +33,8 @@ func getResponse(msg []byte) []byte {
 	case 0x00:
 		resp = prtco.ConstructResponse(CID)
 		ReturnPart := calcuReturnPart(Calcu, req.GetFuncName(), req.GetParamNum(), req.GetParamPart())
+		// send OK(254)
+		req.SetType(0xfe)
 		resp.SetReturnNum(uint8(len(ReturnPart)))
 		resp.SetReturnPart(ReturnPart)
 	}
