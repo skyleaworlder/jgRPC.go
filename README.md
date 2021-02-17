@@ -21,7 +21,7 @@ A Non-Standard RPC.
 
 ## Now
 
-![Load Balance Server Work](README.assets/LdBls.png)
+![demo](https://skyleaworlder.github.io/2021/02/17/jgRPC/rpc.mp4)
 
 The first window is `Client.go`, the second is `LdBlsServer.go`, while the third and the forth are `NodeServer.go`.
 
