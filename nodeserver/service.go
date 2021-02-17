@@ -1,7 +1,12 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"strconv"
+
 	prtco "github.com/skyleaworlder/jgRPC.go/jgproto"
+	jgut "github.com/skyleaworlder/jgRPC.go/jgrpcUtils"
 	jgrpcs "github.com/skyleaworlder/jgRPC.go/nodeserver/jgrpc"
 )
 
@@ -15,6 +20,28 @@ import (
 //
 // 3. communicate with load balance/cache Server
 // 	receive CALL(0) request, then send execute results.
+
+func register() bool {
+	req := prtco.ConstructRequest()
+	req.SetType(0x01)
+	req.SetParamNum(1)
+	// in REGISTER, Length => Port
+	port, _ := strconv.Atoi(Config["Listen_Port"])
+	req.SetLength(uint16(port))
+
+	buf := req.ComposeRequest()
+	buf, _ = jgut.Dial(Config["NS_Addr"], buf)
+
+	// if buf is nil, buf[4] will be out of range
+	if buf == nil {
+		msg := "Fatal Error: NodeServer/service.go register jgut.Dial failed\n"
+		fmt.Fprint(os.Stderr, msg)
+		return false
+	}
+	// 0xfe means OK(254)
+	RespType := uint8(buf[4])
+	return RespType == 0xfe
+}
 
 func getResponse(msg []byte) []byte {
 	// GC might work after re-assign *Request?
@@ -32,6 +59,8 @@ func getResponse(msg []byte) []byte {
 	// CALL(0)
 	case 0x00:
 		resp = prtco.ConstructResponse(CID)
+		// Not only Calcu, any one obj implements jgrpcserver.RPC interface could be used here.
+		// it have should use one function to SELECT obj that implements jgrpcserver.RPC interface.
 		ReturnPart := calcuReturnPart(Calcu, req.GetFuncName(), req.GetParamNum(), req.GetParamPart())
 		// send OK(254)
 		req.SetType(0xfe)

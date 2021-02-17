@@ -47,12 +47,21 @@ func main() {
 		Calcu.Config["Listen_Port"] = *port
 	}
 	fmt.Println("Listen Port is:", Calcu.Config["Listen_Port"])
+	portStr := Calcu.Config["Listen_Port"]
 
-	port := Config["Listen_Port"]
-	tcpAddr, _ := net.ResolveTCPAddr("tcp", port)
+	// Send REGISTER(1) to Name Server
+	for !register() {
+		msg := "Warning: Node Server listener initialization failed\n"
+		fmt.Fprint(os.Stderr, msg)
+		time.Sleep(5 * time.Second)
+		continue
+	}
+
+	// registered, then begin to listen port
+	tcpAddr, _ := net.ResolveTCPAddr("tcp", portStr)
 	listener, err := net.ListenTCP("tcp4", tcpAddr)
 	if err != nil {
-		msg := "Warning: Node Server listener initialization failed\n"
+		msg := "Fatal Error: Node Server listener initialization failed\n"
 		fmt.Fprint(os.Stderr, msg)
 		os.Exit(1)
 	}
