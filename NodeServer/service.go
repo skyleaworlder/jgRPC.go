@@ -25,9 +25,11 @@ func register() bool {
 	req := prtco.ConstructRequest()
 	req.SetType(0x01)
 	req.SetParamNum(1)
-	// in REGISTER, Length => Port
-	port, _ := strconv.Atoi(Config["Listen_Port"])
-	req.SetLength(uint16(port))
+
+	// in REGISTER
+	port, _ := strconv.Atoi(Config["Listen_Port"][1:])
+	tlv := []prtco.TLV{*prtco.ConstructTLV(uint16(port))}
+	req.SetParamPart(tlv)
 
 	buf := req.ComposeRequest()
 	buf, _ = jgut.Dial(Config["NS_Addr"], buf)
