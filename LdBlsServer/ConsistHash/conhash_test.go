@@ -9,14 +9,20 @@ import (
 	"testing"
 
 	"github.com/skyleaworlder/jgRPC.go/LdBlsServer/ldbls"
+	"github.com/umpc/go-sortedmap"
 )
 
 func Test_RESTfulAPI(t *testing.T) {
 	fmt.Println("1. conhash.REST-API test:")
-	ha, hb, hc := sha1.New(), sha1.New(), sha1.New()
+	iptable := sortedmap.New(16, ipComp)
 	addra := "192.168.1.1:5000"
 	addrb := "127.0.0.1:3000"
 	addrc := "192.168.1.1:5001"
+	iptable.Insert(addra, addra)
+	iptable.Insert(addrb, addrb)
+	iptable.Insert(addrc, addrc)
+
+	ha, hb, hc := sha1.New(), sha1.New(), sha1.New()
 	io.WriteString(ha, addra)
 	io.WriteString(hb, addrb)
 	io.WriteString(hc, addrc)
@@ -28,7 +34,7 @@ func Test_RESTfulAPI(t *testing.T) {
 	fmt.Printf("cres: %x\n", hc.Sum(nil))
 
 	var ht = new(Conhash)
-	ht.Init()
+	ht.Init(iptable)
 	nodea := ldbls.Node{
 		HID: ares, IP: net.ParseIP("192.168.1.1"), PORT: 5000,
 	}
@@ -61,8 +67,9 @@ func Test_RESTfulAPI(t *testing.T) {
 		fmt.Println(na)
 	}
 
-	fmt.Println("1.3 I try to modify node a:")
+	fmt.Println("1.3 I try to modify node a&c:")
 	ht.PutNode(&nodea)
+	ht.PostNode(&nodec)
 	na, ok = ht.HT.Get(ares)
 	if !ok {
 		fmt.Println("wuhu! not found! success")
@@ -73,12 +80,14 @@ func Test_RESTfulAPI(t *testing.T) {
 
 	fmt.Println("1.4 I try to modify node b:")
 	ht.PutNode(&ldbls.Node{HID: nodeb.HID, IP: nodeb.IP, PORT: 3306})
-	nb, ok := ht.HT.Get(bres)
-	if !ok {
+	nb, ok1 := ht.HT.Get(bres)
+	nc, ok2 := ht.HT.Get(cres)
+	if !ok1 || !ok2 {
 		fmt.Println("fuck! fail!")
 	} else {
 		fmt.Println("wuhu! I find it!")
 		fmt.Println(nb)
+		fmt.Println(nc)
 	}
 
 	fmt.Println("1.5 I try to search node b:")
@@ -89,4 +98,9 @@ func Test_RESTfulAPI(t *testing.T) {
 		fmt.Println("wuhu! I find it!")
 		fmt.Println(nb)
 	}
+}
+
+// compare function used in SortedMap
+func ipComp(i, j interface{}) bool {
+	return i.(string) < j.(string)
 }

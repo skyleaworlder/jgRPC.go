@@ -1,9 +1,15 @@
 package consisthash
 
 import (
+	"crypto/sha1"
+	"encoding/binary"
 	"errors"
 	"fmt"
+	"io"
+	"net"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/skyleaworlder/jgRPC.go/LdBlsServer/ldbls"
 	sm "github.com/umpc/go-sortedmap"
@@ -15,7 +21,7 @@ type Conhash struct {
 }
 
 // Init is a function to create an obj
-func (c *Conhash) Init() error {
+func (c *Conhash) Init(iptable *sm.SortedMap) error {
 	if c == nil {
 		msg := "Fatal Error: conhash.Init try to init the space that a nil pointer points\n"
 		fmt.Fprint(os.Stderr, msg)
@@ -27,6 +33,35 @@ func (c *Conhash) Init() error {
 		fmt.Fprint(os.Stderr, msg)
 		return errors.New(msg)
 	}
+
+	iter, err := iptable.IterCh()
+	defer iter.Close()
+	if err != nil {
+		msg := "Fatal Error: conhash.Init failed, input iptable iter generation failed\n"
+		fmt.Fprint(os.Stderr, msg+err.Error())
+		return errors.New(msg)
+	}
+
+	// use iptable to insert nodes into c.HT
+	for rec := range iter.Records() {
+		// rec is address(a.b.c.d:port)
+		h := sha1.New()
+		addr := rec.Val.(string)
+		io.WriteString(h, addr)
+
+		// create a node
+		// HID => sha1.New, io.WriteString, h.Sum
+		// ip, port <= addr.split(":")
+		HID := binary.BigEndian.Uint64(h.Sum(nil)[:8])
+		arr := strings.Split(addr, ":")
+		ip := arr[0]
+		port, _ := strconv.Atoi(arr[1])
+		node := ldbls.Node{
+			HID: HID, IP: net.ParseIP(ip), PORT: uint16(port),
+		}
+		c.PostNode(&node)
+	}
+
 	return nil
 }
 
