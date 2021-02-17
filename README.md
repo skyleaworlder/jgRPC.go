@@ -12,7 +12,7 @@ It's clear that our simple `Load Balance Server` and `Name Server` does work.
 
 ## Target
 
-* [x] Self-Defined RPC Protocol; (Non-Standard)
+* [x] Self-Defined RPC Protocol; (Non-Standard, see [jgRPC-Protocol](https://github.com/skyleaworlder/NOT_NOTE/blob/main/RPC-go-jgRPC-document.ipynb))
 * [x] Protocol Analysis, Serializable/Deserializable; (Simple)
 * [x] Procedure Parameters Analysis, using Reflect; (Simple, Need polished)
 * [x] Load Balance; (Consist Hash)
