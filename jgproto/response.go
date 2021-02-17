@@ -27,7 +27,7 @@ type Response struct {
 //
 // CID: the same as request
 //
-// Type: default OK(1)
+// Type: default OK(254)
 //
 // ReturnNum: default 0, void
 //
@@ -36,7 +36,7 @@ func ConstructResponse(CID uint16) *Response {
 	resp := new(Response)
 	resp.SetMagic(0x4A47)
 	resp.SetCID(CID)
-	resp.SetType(1)
+	resp.SetType(0xfe)
 	resp.SetReturnNum(0)
 	resp.SetReturnPart([]TLV{})
 	return resp
