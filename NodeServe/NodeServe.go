@@ -38,6 +38,8 @@ var (
 )
 
 func main() {
+	// init config
+	// mainly listen port
 	jgut.Readcfg(Config, "NodeServer.cfg")
 	Calcu.Init()
 	Calcu.Config = Config
