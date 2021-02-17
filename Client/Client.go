@@ -26,6 +26,6 @@ func main() {
 	calcu := new(jgrpcc.Calculator)
 	calcu.Config = Config
 
-	res := calcu.Add(1, 2)
+	res, _ := calcu.Add(1, 2)
 	fmt.Println("calcu.Add(1, 2) result from remote: ", res)
 }
