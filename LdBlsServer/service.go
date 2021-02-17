@@ -10,6 +10,7 @@ import (
 	conhash "github.com/skyleaworlder/jgRPC.go/LdBlsServer/ConsistHash"
 	prtco "github.com/skyleaworlder/jgRPC.go/jgproto"
 	jgut "github.com/skyleaworlder/jgRPC.go/jgrpcUtils"
+	sm "github.com/umpc/go-sortedmap"
 )
 
 // LdBlsServer should implement several functions:
@@ -48,4 +49,32 @@ func getResponse(ht *conhash.Conhash, msg []byte) ([]byte, error) {
 		fmt.Println("Warning: ldbls.service.go/getResponse shouldn't go here")
 		return []byte{}, err
 	}
+}
+
+func discovery(iptable *sm.SortedMap) bool {
+	resp := prtco.ConstructRequest()
+	// NS(3)
+	resp.SetType(0x03)
+
+	msg := resp.ComposeRequest()
+	buf, err := jgut.Dial(Config["NS_Addr"], msg)
+	if err != nil {
+		msg := "Warning: Service Discovery Failed\n"
+		fmt.Fprint(os.Stderr, msg+err.Error())
+		return false
+	}
+
+	// transfer []bytes from []TLV to []interface{}
+	// ip is string
+	_, _, ips := prtco.ParseResponse(buf)
+	for _, v := range ips {
+		ip := v.(string)
+		iptable.Insert(ip, ip)
+	}
+	return true
+}
+
+// compare function used in SortedMap
+func ipComp(i, j interface{}) bool {
+	return i.(string) < j.(string)
 }

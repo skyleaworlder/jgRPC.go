@@ -8,6 +8,7 @@ import (
 
 	conhash "github.com/skyleaworlder/jgRPC.go/LdBlsServer/ConsistHash"
 	jgut "github.com/skyleaworlder/jgRPC.go/jgrpcUtils"
+	sm "github.com/umpc/go-sortedmap"
 )
 
 // LdBlsServer should implement several functions:
@@ -22,12 +23,14 @@ import (
 
 const (
 	cfgMaxNum = 16
+	ipMaxNum  = 16
 )
 
 var (
 	// Config is a map
 	// e.g. "Local_IP" => "127.0.0.1"
-	Config = make(map[string]string, cfgMaxNum)
+	Config  = make(map[string]string, cfgMaxNum)
+	iptable = sm.New(ipMaxNum, ipComp)
 )
 
 func main() {
@@ -45,7 +48,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	ht := conhash.InitConHash(Config)
+	// service discovery
+	for !discovery(iptable) {
+
+	}
+
+	// init conhash.HT
+	ht := conhash.InitConHash(iptable, Config)
 	fmt.Println(ht)
 
 	for {
